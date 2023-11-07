@@ -7,6 +7,8 @@ use Filament\Forms\Components\Field;
 
 class Turnstile extends Field
 {
+    protected string $viewIdentifier = 'turnstile';
+
     protected string $view = 'turnstile::components.turnstile';
 
     protected string $theme = 'auto';

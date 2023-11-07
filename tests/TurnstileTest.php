@@ -1,26 +1,15 @@
 <?php
 
-use Coderflex\FilamentTurnstile\Tests\Fixtures\Login;
-use Coderflex\FilamentTurnstile\Tests\Fixtures\Register;
+use Coderflex\FilamentTurnstile\Tests\Fixtures\ContactUs;
 
 use function Pest\Livewire\livewire;
 
-it('can render login page', function () {
-    livewire(Login::class)
+it('can render contact page', function () {
+    livewire(ContactUs::class)
         ->assertOk();
 });
 
-it('can render register page', function () {
-    livewire(Register::class)
-        ->assertOk();
-});
-
-test('login page has captcha field', function () {
-    livewire(Login::class)
-        ->assertFormFieldExists('cf-captcha');
-});
-
-test('register page has captcha field', function () {
-    livewire(Register::class)
-        ->assertFormFieldExists('cf-captcha');
+test('contact page has captcha field', function () {
+    livewire(ContactUs::class)
+        ->assertFormFieldExists('cf-captcha', 'form');
 });

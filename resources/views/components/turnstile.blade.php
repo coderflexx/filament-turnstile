@@ -1,12 +1,14 @@
 @php
-    $id = $getId();
     $statePath = $getStatePath();
+    $fieldWrapperView = $getFieldWrapperView();
+
     $theme = $getTheme();
     $size = $getSize();
     $language = $getLanguage();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component :component="$fieldWrapperView" :field="$turnstile">
+
     <div x-data="{
             state: $wire.entangle('{{ $statePath }}').defer 
         }"
@@ -16,7 +18,8 @@
             data-sitekey="{{config('turnstile.turnstile_site_key')}}"
             :data-theme="$theme"
             :data-language="$language"
-            :data-size="$size">
+            :data-size="$size"
+            >
         </div>
     </div>
 
@@ -27,12 +30,12 @@
                 callback: function(token) {
                     window.Livewire
                         .find('{{$this->id}}')
-                        .$set('{{$getStatePath()}}', token);
+                        .$set('{{$statePath}}', token);
                 },
                 errorCallback: function () {
                     window.Livewire
                         .find('{{$this->id}}')
-                        .$set('{{$getStatePath()}}', 'error');
+                        .$set('{{$statePath}}', 'error');
                 }
             }
 
