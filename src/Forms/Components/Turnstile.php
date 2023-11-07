@@ -3,9 +3,9 @@
 namespace Coderflex\FilamentTurnstile\Forms\Components;
 
 use Coderflex\LaravelTurnstile\Rules\TurnstileCheck;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Field;
 
-class Turnstile extends TextInput
+class Turnstile extends Field
 {
     protected string $viewIdentifier = 'turnstile';
 
