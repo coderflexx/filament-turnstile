@@ -2,10 +2,10 @@
 
 namespace Coderflex\FilamentTurnstile;
 
-use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentTurnstileServiceProvider extends PluginServiceProvider
+class FilamentTurnstileServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {

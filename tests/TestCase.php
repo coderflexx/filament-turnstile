@@ -3,43 +3,53 @@
 namespace Coderflex\FilamentTurnstile\Tests;
 
 use Coderflex\FilamentTurnstile\FilamentTurnstileServiceProvider;
-use Coderflex\FilamentTurnstile\Tests\Fixtures\Login;
-use Filament\FilamentServiceProvider;
-use Filament\Forms\FormsServiceProvider;
-use Filament\Support\SupportServiceProvider;
-use Livewire\Livewire;
-use Livewire\LivewireServiceProvider;
+use Coderflex\FilamentTurnstile\Tests\Fixtures\TurnstilePanelProvider;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
+    protected $enablesPackageDiscoveries = true;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        Factory::guessFactoryNamesUsing(
+            fn (string $modelName) => 'Coderflex\\FilamentTurnstile\\Tests\\Database\\Factories\\'.class_basename($modelName).'Factory'
+        );
+
         config()->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
 
-        $this->registerLivewireComponents();
+        $this->setCurrentFilamentPanel();
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            FilamentServiceProvider::class,
-            FormsServiceProvider::class,
-            LivewireServiceProvider::class,
-            SupportServiceProvider::class,
             FilamentTurnstileServiceProvider::class,
+            TurnstilePanelProvider::class,
         ];
     }
 
     public function getEnvironmentSetUp($app)
     {
-        //
+        config()->set('database.default', 'testing');
+
+        $migrations = [
+            include __DIR__.'/Database/Migrations/create_users_table.php',
+        ];
+
+        collect($migrations)->each(
+            fn ($migration) => $migration->up()
+        );
     }
 
-    protected function registerLivewireComponents(): void
+    protected function setCurrentFilamentPanel(): void
     {
-        Livewire::component('login', Login::class);
+        Filament::setCurrentPanel(
+            Filament::getPanel('turnstile')
+        );
     }
 }

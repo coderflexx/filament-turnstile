@@ -4,7 +4,7 @@ namespace Coderflex\FilamentTurnstile\Tests\Fixtures;
 
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 
-class Login extends \Filament\Pages\Auth\Login
+class Register extends \Filament\Pages\Auth\Register
 {
     protected function getForms(): array
     {
@@ -12,9 +12,10 @@ class Login extends \Filament\Pages\Auth\Login
             'form' => $this->form(
                 $this->makeForm()
                     ->schema([
+                        $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
                         $this->getPasswordFormComponent(),
-                        $this->getRememberFormComponent(),
+                        $this->getPasswordConfirmationFormComponent(),
                         Turnstile::make('cf-captcha')
                             ->theme('auto'),
                     ])

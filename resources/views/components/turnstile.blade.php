@@ -1,26 +1,22 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-action="$getHintAction()"
-    :hint-color="$getHintColor()"
-    :hint-icon="$getHintIcon()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
->
-    <div x-data="{ 
-            state: $wire.entangle('{{ $getStatePath() }}').defer 
+@php
+    $id = $getId();
+    $statePath = $getStatePath();
+    $theme = $getTheme();
+    $size = $getSize();
+    $language = $getLanguage();
+@endphp
+
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+    <div x-data="{
+            state: $wire.entangle('{{ $statePath }}').defer 
         }"
         wire:ignore
     >
         <div id="turnstile-widget"
             data-sitekey="{{config('turnstile.turnstile_site_key')}}"
-            data-theme="{{$getTheme()}}"
-            data-language="{{$getLanguage()}}"
-            data-size="{{$getSize()}}">
+            :data-theme="$theme"
+            :data-language="$language"
+            :data-size="$size">
         </div>
     </div>
 
