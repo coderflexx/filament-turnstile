@@ -5,6 +5,7 @@ namespace Coderflex\FilamentTurnstile\Tests\Fixtures;
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Coderflex\FilamentTurnstile\Tests\Models\Contact;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -13,6 +14,7 @@ use Illuminate\Contracts\View\View;
 
 class ContactUs extends SimplePage
 {
+    use InteractsWithActions;
     use InteractsWithFormActions;
 
     public ?array $data = [];
@@ -42,14 +44,18 @@ class ContactUs extends SimplePage
                         Forms\Components\TextInput::make('content')
                             ->label('Content')
                             ->required(),
-                        Turnstile::make('turnstile')
-                            // ->id('cf-captcha-field')
+                        Turnstile::make('cf-captcha')
                             ->theme('auto'),
                     ])
             )
                 ->statePath('data')
                 ->model(Contact::class),
         ];
+    }
+
+    public function send()
+    {
+        Contact::create($this->form->getState());
     }
 
     /**
@@ -72,13 +78,6 @@ class ContactUs extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
-    }
-
-    public function send()
-    {
-        dd($this->form->getState());
-
-        Contact::create($this->form->getState());
     }
 
     public function render(): View

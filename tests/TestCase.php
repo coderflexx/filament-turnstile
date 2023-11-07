@@ -32,8 +32,6 @@ class TestCase extends Orchestra
         );
 
         config()->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
-        config()->set('turnstile.turnstile_site_key', '2x00000000000000000000AB');
-        config()->set('turnstile.turnstile_secret_key', '2x0000000000000000000000000000000AA');
 
         $this->setCurrentFilamentPanel();
     }

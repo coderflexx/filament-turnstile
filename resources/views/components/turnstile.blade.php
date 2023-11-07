@@ -1,4 +1,5 @@
 @php
+    $id = $getId();
     $statePath = $getStatePath();
     $fieldWrapperView = $getFieldWrapperView();
 
@@ -12,6 +13,21 @@
     <div x-data="{
             state: $wire.entangle('{{ $statePath }}').defer 
         }"
+        x-init="(() => {
+            let options= {
+                callback: function (token) {
+                    $wire.set('{{ $statePath }}', token)
+                },
+
+                errorCallback: function () {
+                    $wire.set('{{ $statePath }}', null)
+                },
+            }
+
+            window.onloadTurnstileCallback = () => {
+                turnstile.render($refs.turnstile, options)
+            }
+        })"
         wire:ignore
     >
         <div id="turnstile-widget"
@@ -19,29 +35,12 @@
             :data-theme="$theme"
             :data-language="$language"
             :data-size="$size"
+            x-ref="turnstile"
             >
         </div>
     </div>
 
     @push('scripts')
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
-        <script>
-            let options = {
-                callback: function(token) {
-                    window.Livewire
-                        .find('{{$this->id}}')
-                        .$set('{{$statePath}}', token);
-                },
-                errorCallback: function () {
-                    window.Livewire
-                        .find('{{$this->id}}')
-                        .$set('{{$statePath}}', 'error');
-                }
-            }
-
-            window.onloadTurnstileCallback = () => {
-                turnstile.render('#turnstile-widget', options)
-            }
-        </script>
     @endpush
 </x-dynamic-component>
