@@ -11,90 +11,116 @@
 
 </br>
 
-__Filament Turnstile__, is a plugin to help you implement the Cloudflare turnstile. 
+**Filament Turnstile** is an essential plugin designed to seamlessly integrate Cloudflare's turnstile into your applications.
 
-This plugin uses [Laravel Turnstile](https://github.com/coderflexx/laravel-turnstile) Behind the scene, you can head to the page __README__ to learn more.
+This plugin uses [Laravel Turnstile](https://github.com/coderflexx/laravel-turnstile) under the hood. For detailed information, explore the [Laravel Turnstile README](https://github.com/coderflexx/laravel-turnstile).
 
 ## Installation
-You can install the package via composer:
-
+Install the package via Composer:
 
 ```bash
 composer require coderflex/filament-turnstile
 ```
 
+For users still on **Filament V2**, install the package using:
 
-## Turnstile Keys
-To be able to use __Cloudflare Turnstile__, you need to get the `SiteKey`, and the `SecretKey` from your [Cloudflare dashboard](https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key)
-
-After Generating the __keys__, use `TURNSTILE_SITE_KEY`, and `TURNSTILE_SECRET_KEY` in your `.env` file
-
-```.env
-TURNSTILE_SITE_KEY=2x00000000000000000000AB
-TURNSTILE_SECRET_KEY=2x0000000000000000000000000000000AA
+```bash
+composer require coderflex/filament-turnstil "^1.0"
 ```
 
-If you want to test the widget, you can use the [Dummy site keys and secret keys](https://developers.cloudflare.com/turnstile/reference/testing/) that Cloudflare provides.
+## Turnstile Keys
+To utilize **Cloudflare Turnstile**, obtain your `SiteKey` and `SecretKey` from your Cloudflare Dashboard.
+
+Refer to the [documentation](https://developers.cloudflare.com/turnstile/get-started/#get-a-sitekey-and-secret-key) for detailed instructions.
+
+After generating the **keys**, include them in your `.env` file using the following format:
+
+```env
+TURNSTILE_SITE_KEY=1x00000000000000000000AA
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+```
+
+For testing purposes, you can use [Dummy site keys and secret keys](https://developers.cloudflare.com/turnstile/reference/testing/) provided by Cloudflare.
 
 ## Usage
 
-The usage of this plugin, is really straight - forward. In your form, use the following code:
+Utilizing this plugin is incredibly straightforward. In your form, incorporate the following code:
 
 ```php
-...
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 
-...
-    Turnstile::make('captcha')
-        ->theme('auto')
-        ->language('fr')
-        ->size('normal'),
+Turnstile::make('captcha')
+    ->theme('auto') // accepts light, dark, auto
+    ->language('en-US') // see below
+    ->size('normal'), // accepts normal, compact
 ```
 
-The `Turnstile` field, has few options to use. You can learn more about them in [the Cloudflare configuration section](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#configurations)
+For a list of supported languages, refer to the [supported languages section](https://developers.cloudflare.com/turnstile/reference/supported-languages/). 
 
-## Real Life Example:
-In order to use __Turnstile__ captcha with the `Login` page in filament, use the following steps:
+The `Turnstile` field offers various options; you can learn more about them in [the Cloudflare configuration section](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#configurations).
 
-Create a new `App/Filament/Pages/Login.php` class
+
+## Real-Life Example:
+
+To implement the **Turnstile** captcha with the `Login` page in Filament, follow these steps:
+
+Create a new `App/Filament/Pages/Auth/Login.php` class:
 
 ```php
-<?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Auth;
 
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
+use Filament\Forms\Form;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Pages\Auth\Login as AuthLogin;
 
-class Login extends \Filament\Http\Livewire\Auth\Login
+class Login extends AuthLogin
 {
-    protected function getFormSchema(): array
+    /**
+     * @return array<int|string, string|Form>
+     */
+    protected function getForms(): array
     {
-        return array_merge(
-            parent::getFormSchema(),
-            [
-                Turnstile::make('cf-captcha')
-                    ->theme('auto')
-                    ->language('en-US')
-                    ->size('normal'),
-            ]
-        );
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getRememberFormComponent(),
+                        Turnstile::make('captcha')
+                            ->label('Captcha')
+                            ->theme('auto'),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 }
 ```
 
-Then override the `Login` class in the `filament.php` config file.
+Then, override the `login()` method in your `PanelProvider` (e.g., `AdminPanelProvider`):
 
 ```php
-    return [
-        ....
-        'auth' => [
-            'guard' => env('FILAMENT_AUTH_GUARD', 'web'),
-            'pages' => [
-                'login' => \App\Filament\Pages\Login::class,
-            ],
-        ],
-        ...
-    ]
+namespace App\Providers\Filament;
+
+use App\Filament\Auth\Login;
+use Filament\Panel;
+use Filament\PanelProvider;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->login(Login::class); // override the login page class.
+            ...
+    }
+}
 ```
 ## Testing
 
