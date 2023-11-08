@@ -23,7 +23,9 @@ class Turnstile extends Field
 
         $this->label('');
 
-        $this->rules(['required', new TurnstileCheck()]);
+        $this->required();
+
+        $this->rule(new TurnstileCheck());
 
         $this->dehydrated(false);
     }

@@ -1,5 +1,4 @@
 @php
-    $id = $getId();
     $statePath = $getStatePath();
     $fieldWrapperView = $getFieldWrapperView();
 
@@ -13,6 +12,7 @@
     <div x-data="{
             state: $wire.entangle('{{ $statePath }}').defer 
         }"
+        wire:ignore
         x-init="(() => {
             let options= {
                 callback: function (token) {
@@ -27,14 +27,12 @@
             window.onloadTurnstileCallback = () => {
                 turnstile.render($refs.turnstile, options)
             }
-        })"
-        wire:ignore
+        })()"
     >
-        <div id="turnstile-widget"
-            data-sitekey="{{config('turnstile.turnstile_site_key')}}"
-            :data-theme="$theme"
-            :data-language="$language"
-            :data-size="$size"
+        <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
+            data-theme="{{ $theme }}"
+            data-language="{{ $language }}"
+            data-size="{{ $size }}"
             x-ref="turnstile"
             >
         </div>

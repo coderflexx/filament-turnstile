@@ -4,19 +4,12 @@ namespace Coderflex\FilamentTurnstile\Tests\Fixtures;
 
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Coderflex\FilamentTurnstile\Tests\Models\Contact;
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\SimplePage;
-use Illuminate\Contracts\View\View;
+use Filament\Forms\FormsComponent;
 
-class ContactUs extends SimplePage
+class ContactUs extends FormsComponent
 {
-    use InteractsWithActions;
-    use InteractsWithFormActions;
-
     public ?array $data = [];
 
     public function mount(): void
@@ -58,30 +51,8 @@ class ContactUs extends SimplePage
         Contact::create($this->form->getState());
     }
 
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    protected function getFormActions(): array
+    public function render()
     {
-        return [
-            $this->getSendFormAction(),
-        ];
-    }
-
-    protected function getSendFormAction(): Action
-    {
-        return Action::make('Send')
-            ->label(__('Send'))
-            ->submit('send');
-    }
-
-    protected function hasFullWidthFormActions(): bool
-    {
-        return true;
-    }
-
-    public function render(): View
-    {
-        return view('fixtures.contact-us');
+        return 'fixtures.contact-us';
     }
 }
