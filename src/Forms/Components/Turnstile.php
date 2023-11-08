@@ -7,6 +7,8 @@ use Filament\Forms\Components\Field;
 
 class Turnstile extends Field
 {
+    protected string $viewIdentifier = 'turnstile';
+
     protected string $view = 'turnstile::components.turnstile';
 
     protected string $theme = 'auto';
@@ -21,7 +23,9 @@ class Turnstile extends Field
 
         $this->label('');
 
-        $this->rules(['required', new TurnstileCheck()]);
+        $this->required();
+
+        $this->rule(new TurnstileCheck());
 
         $this->dehydrated(false);
     }
@@ -47,17 +51,26 @@ class Turnstile extends Field
         return $this;
     }
 
-    public function getTheme(): string
+    /**
+     * @return string
+     */
+    public function getTheme()
     {
         return $this->evaluate($this->theme);
     }
 
-    public function getSize(): string
+    /**
+     * @return string
+     */
+    public function getSize()
     {
         return $this->evaluate($this->size);
     }
 
-    public function getLanguage(): string
+    /**
+     * @return string
+     */
+    public function getLanguage()
     {
         return $this->evaluate($this->language);
     }
