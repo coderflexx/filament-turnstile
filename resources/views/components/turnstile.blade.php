@@ -38,7 +38,5 @@
         </div>
     </div>
 
-    @push('scripts')
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
-    @endpush
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
 </x-dynamic-component>
