@@ -27,6 +27,10 @@
             window.onloadTurnstileCallback = () => {
                 turnstile.render($refs.turnstile, options)
             }
+
+            resetCaptcha = () => {
+                turnstile.reset($refs.turnstile)
+            }
         })()"
     >
         <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
@@ -39,4 +43,14 @@
     </div>
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
+
+    @push('scripts')
+        <script>
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('reset-captcha', (event) => {
+                    resetCaptcha()
+                })
+            })
+        </script>
+    @endpush
 </x-dynamic-component>

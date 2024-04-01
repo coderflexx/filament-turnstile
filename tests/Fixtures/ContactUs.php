@@ -7,6 +7,7 @@ use Coderflex\FilamentTurnstile\Tests\Models\Contact;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\FormsComponent;
+use Illuminate\Validation\ValidationException;
 
 class ContactUs extends FormsComponent
 {
@@ -54,5 +55,10 @@ class ContactUs extends FormsComponent
     public function render()
     {
         return 'fixtures.contact-us';
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        $this->dispatch('reset-captcha');
     }
 }
