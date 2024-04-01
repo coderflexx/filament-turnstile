@@ -7,7 +7,7 @@
 
 </br>
 
-![Login Screen screenshot](https://github.com/coderflexx/filament-turnstile/raw/main/art/thumbnail.png)
+<img src="https://github.com/coderflexx/filament-turnstile/raw/main/art/thumbnail.png" alt="Login Screen screenshot" class="filament-hidden"/>
 
 </br>
 
@@ -59,6 +59,67 @@ For a list of supported languages, refer to the [supported languages section](ht
 
 The `Turnstile` field offers various options; you can learn more about them in [the Cloudflare configuration section](https://developers.cloudflare.com/turnstile/get-started/client-side-rendering/#configurations).
 
+## Turnstile Events
+
+The Turnstile package provides events that you can leverage to manage the behavior of the captcha in various scenarios.
+
+**Reset Event**
+
+The `reset-captcha` event allows you to programmatically reset the captcha challenge. This can be useful when you want to:
+
+- **Clear the challenge after a successful form submission:** This ensures a fresh captcha for the next user.
+- **Reset the challenge upon validation errors:** Prevents users from being stuck with a previously solved captcha after encountering errors during form submission.
+
+**Dispatching the Reset Event:**
+
+There are two primary ways to dispatch the `reset-captcha` event:
+
+**1. Using `onValidationError` Method:**
+
+Filament provides the `onValidationError` method within your form's Livewire component. This method is automatically triggered whenever form [validation fails](https://filamentphp.com/docs/3.x/forms/validation#sending-validation-notifications). Here's how to utilize it:
+
+```php
+protected function onValidationError(ValidationException $exception): void
+{
+    $this->dispatch('reset-captcha');
+
+    // Perform additional actions as necessary (e.g., display error messages)
+}
+```
+
+In this example, the `reset-captcha` event is dispatched upon validation errors, ensuring the captcha is reset for the user's next attempt.
+
+**2. Manual Dispatching:**
+
+For scenarios where resetting the captcha is not directly tied to validation, you can manually dispatch the event using Filament's event dispatcher:
+
+```php
+$this->dispatch('reset-captcha');
+```
+
+**Using Reset Event in Login Page:**
+
+To automatically reset the captcha on a failed login attempt in your login form's Livewire component, leverage the `throwFailureValidationException` method:
+
+```php
+protected function authenticate(): void
+{
+    // Perform authentication logic
+    // ...
+
+    if (! Auth::attempt($this->data)) {
+        $this->throwFailureValidationException(
+            [
+                'email' => 'Invalid email or password.',
+            ]
+        );
+    }
+
+    // Redirect to success page or perform other actions
+}
+```
+
+By throwing a validation exception with appropriate error messages, you trigger the `onValidationError` method, which in turn dispatches the `reset-captcha` event, effectively resetting the captcha for the next login attempt.
 
 ## Real-Life Example:
 
@@ -96,6 +157,14 @@ class Login extends AuthLogin
                     ->statePath('data'),
             ),
         ];
+    }
+
+    // if you want to reset the captcha in case of validation error
+    protected function throwFailureValidationException(): never
+    {
+        $this->dispatch('reset-captcha');
+
+        parent::throwFailureValidationException();
     }
 }
 ```

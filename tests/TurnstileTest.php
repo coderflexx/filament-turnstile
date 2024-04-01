@@ -4,6 +4,7 @@ use Coderflex\FilamentTurnstile\Tests\Fixtures\ContactUs;
 use Coderflex\FilamentTurnstile\Tests\Models\Contact;
 use Coderflex\LaravelTurnstile\Facades\LaravelTurnstile;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 
 use function Pest\Livewire\livewire;
 
@@ -93,4 +94,23 @@ it('cannot send a message', function () {
 
     expect(Contact::get())
         ->toHaveCount(0);
+});
+
+it('reset captcha event sent, on validation error ', function () {
+    Event::fake();
+
+    Config::set('turnstile', [
+        'turnstile_site_key' => '2x00000000000000000000AB',
+        'turnstile_secret_key' => '2x0000000000000000000000000000000AA',
+    ]);
+
+    livewire(ContactUs::class)
+        ->fillForm([
+            'name' => null,
+            'email' => 'john@example.com',
+            'content' => 'This is a simple message',
+        ])
+        ->call('send')
+        ->assertHasFormErrors(['name'])
+        ->assertDispatched('reset-captcha');
 });
