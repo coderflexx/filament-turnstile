@@ -7,7 +7,7 @@
 
 </br>
 
-![Login Screen screenshot](https://github.com/coderflexx/filament-turnstile/raw/main/art/thumbnail.png)
+<img src="https://github.com/coderflexx/filament-turnstile/raw/main/art/thumbnail.png" alt="Login Screen screenshot" class="filament-hidden"/>
 
 </br>
 
