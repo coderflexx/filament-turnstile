@@ -7,7 +7,7 @@
     $language = $getLanguage();
 @endphp
 
-<x-dynamic-component :component="$fieldWrapperView" :field="$turnstile">
+<x-dynamic-component class="flex justify-center border py-8 rounded-xl" :component="$fieldWrapperView" :field="$turnstile">
 
     <div x-data="{
             state: $wire.entangle('{{ $statePath }}').defer 
