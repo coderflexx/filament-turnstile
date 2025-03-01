@@ -10,10 +10,11 @@
 <x-dynamic-component :component="$fieldWrapperView" :field="$turnstile">
 
     <div x-data="{
-            state: $wire.entangle('{{ $statePath }}').defer 
+            state: $wire.entangle('{{ $statePath }}').defer
         }"
-        wire:ignore
-        x-init="(() => {
+         wire:ignore
+         x-load-js="['https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback']"
+         x-init="(() => {
             let options= {
                 callback: function (token) {
                     $wire.set('{{ $statePath }}', token)
@@ -31,26 +32,16 @@
             resetCaptcha = () => {
                 turnstile.reset($refs.turnstile)
             }
+
+            $wire.on('reset-captcha', () => resetCaptcha())
         })()"
     >
         <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
-            data-theme="{{ $theme }}"
-            data-language="{{ $language }}"
-            data-size="{{ $size }}"
-            x-ref="turnstile"
-            >
+             data-theme="{{ $theme }}"
+             data-language="{{ $language }}"
+             data-size="{{ $size }}"
+             x-ref="turnstile"
+        >
         </div>
     </div>
-
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" defer></script>
-
-    @push('scripts')
-        <script>
-            document.addEventListener('livewire:init', () => {
-                Livewire.on('reset-captcha', (event) => {
-                    resetCaptcha()
-                })
-            })
-        </script>
-    @endpush
 </x-dynamic-component>
