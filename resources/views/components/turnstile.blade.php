@@ -34,6 +34,20 @@
             }
 
             $wire.on('reset-captcha', () => resetCaptcha())
+
+            const observer = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                      if (entry.isIntersecting && 
+                          window.turnstile && 
+                          !$refs.turnstile.querySelector('.cf-turnstile')) {
+                          turnstile.render($refs.turnstile, options);
+                      }
+                  });
+              }, { threshold: 0.1 })
+
+            if ($refs.turnstile) {
+                observer.observe($refs.turnstile);
+            }
         })()"
     >
         <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
