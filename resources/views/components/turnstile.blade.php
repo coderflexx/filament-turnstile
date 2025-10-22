@@ -10,11 +10,11 @@
 <x-dynamic-component :component="$fieldWrapperView" :field="$turnstile">
 
     <div wire:ignore
+         x-load-js="['https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad']"
          x-data="{
             state: $wire.entangle('{{ $statePath }}').defer,
-            widgetId: null
+            widgetId: null,
         }"
-         x-load-js="['https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad']"
          x-init="(() => {
             let options = {
                 sitekey: '{{config('turnstile.turnstile_site_key')}}',
@@ -63,12 +63,6 @@
             }
         })()"
     >
-        <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
-             data-theme="{{ $theme }}"
-             data-language="{{ $language }}"
-             data-size="{{ $size }}"
-             x-ref="turnstile"
-        >
-        </div>
+        <div x-ref="turnstile"></div>
     </div>
 </x-dynamic-component>
