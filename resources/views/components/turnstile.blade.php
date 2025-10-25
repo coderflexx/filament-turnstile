@@ -9,53 +9,60 @@
 
 <x-dynamic-component :component="$fieldWrapperView" :field="$turnstile">
 
-    <div x-data="{
-            state: $wire.entangle('{{ $statePath }}').defer
+    <div wire:ignore
+         x-load-js="['https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad']"
+         x-data="{
+            state: $wire.entangle('{{ $statePath }}').defer,
+            widgetId: null,
         }"
-         wire:ignore
-         x-load-js="['https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback']"
          x-init="(() => {
-            let options= {
+            let options = {
+                sitekey: '{{config('turnstile.turnstile_site_key')}}',
+                theme: '{{ $theme }}',
+                size: '{{ $size }}',
+                language: '{{ $language }}',
                 callback: function (token) {
                     $wire.set('{{ $statePath }}', token)
                 },
-
-                errorCallback: function () {
+                'error-callback': function () {
                     $wire.set('{{ $statePath }}', null)
-                },
+                }
             }
 
-            window.onloadTurnstileCallback = () => {
-                turnstile.render($refs.turnstile, options)
+            // Render widget when Turnstile API is ready
+            const renderWidget = () => {
+                if (!window.turnstile || !$refs.turnstile || widgetId !== null) {
+                    return;
+                }
+
+                widgetId = turnstile.render($refs.turnstile, options);
             }
 
-            resetCaptcha = () => {
-                turnstile.reset($refs.turnstile)
+            // Called when Turnstile API loads
+            window.onTurnstileLoad = () => {
+                renderWidget();
             }
 
-            $wire.on('reset-captcha', () => resetCaptcha())
+            // If API already loaded (on re-render), render immediately
+            if (window.turnstile) {
+                renderWidget();
+            }
 
-            const observer = new IntersectionObserver((entries) => {
-                  entries.forEach(entry => {
-                      if (entry.isIntersecting && 
-                          window.turnstile && 
-                          !$refs.turnstile.querySelector('.cf-turnstile')) {
-                          turnstile.render($refs.turnstile, options);
-                      }
-                  });
-              }, { threshold: 0.1 })
+            $wire.on('reset-captcha', () => {
+                if (widgetId !== null && window.turnstile) {
+                    turnstile.reset(widgetId);
+                }
+            })
 
-            if ($refs.turnstile) {
-                observer.observe($refs.turnstile);
+            // Cleanup when component is destroyed
+            return () => {
+                if (widgetId !== null && window.turnstile) {
+                    turnstile.remove(widgetId);
+                    widgetId = null;
+                }
             }
         })()"
     >
-        <div data-sitekey="{{config('turnstile.turnstile_site_key')}}"
-             data-theme="{{ $theme }}"
-             data-language="{{ $language }}"
-             data-size="{{ $size }}"
-             x-ref="turnstile"
-        >
-        </div>
+        <div x-ref="turnstile"></div>
     </div>
 </x-dynamic-component>
