@@ -34,19 +34,25 @@ class TestCase extends Orchestra
         config()->set('app.key', '6rE9Nz59bGRbeMATftriyQjrpF7DcOQm');
 
         $this->setCurrentFilamentPanel();
+
+        // Ensure DataStore is fresh for each test
+        // The issue was that Livewire's DataStore singleton (which holds component state) was not being correctly reset between tests in this environment, causing state persistence failures.
+        $this->app->forgetInstance(\Livewire\Mechanisms\DataStore::class);
+        $this->app->singleton(\Livewire\Mechanisms\DataStore::class);
     }
 
     protected function getPackageProviders($app)
     {
         return [
+            LivewireServiceProvider::class,
             ActionsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
             BladeIconsServiceProvider::class,
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
+            \Filament\Schemas\SchemasServiceProvider::class,
             InfolistsServiceProvider::class,
-            LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
