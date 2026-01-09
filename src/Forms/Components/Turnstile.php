@@ -51,26 +51,17 @@ class Turnstile extends Field
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTheme()
+    public function getTheme(): string
     {
         return $this->evaluate($this->theme);
     }
 
-    /**
-     * @return string
-     */
-    public function getSize()
+    public function getSize(): string
     {
         return $this->evaluate($this->size);
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         return $this->evaluate($this->language);
     }
