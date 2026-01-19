@@ -4,10 +4,11 @@ namespace Coderflex\FilamentTurnstile\Tests\Fixtures;
 
 use Coderflex\FilamentTurnstile\Forms\Components\Turnstile;
 use Coderflex\FilamentTurnstile\Tests\Models\Contact;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Schema;
+use Illuminate\Support\MessageBag;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -17,25 +18,42 @@ class ContactUs extends Component implements HasForms
 
     public ?array $data = [];
 
-    public function mount(): void
+    public ?string $cfCaptcha = null;
+
+    protected function rules()
     {
-        $this->form->fill();
+        return [
+            'data.name' => 'required',
+            'data.cfCaptcha' => 'required|string',
+        ];
     }
 
-    public function form(Schema $schema): Schema
+    public function getErrorBag()
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
+        return new MessageBag;
+    }
+
+    protected $validationAttributes = [
+        'data.name' => 'name',
+        'data.email' => 'email',
+        'data.content' => 'content',
+        'data.cf-captcha' => 'captcha',
+    ];
+
+    public function form(Schema $form): Schema
+    {
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('name')
                     ->label('Name')
                     ->required(),
-                TextInput::make('email')
+                Forms\Components\TextInput::make('email')
                     ->label('Email')
                     ->required(),
-                TextInput::make('content')
+                Forms\Components\TextInput::make('content')
                     ->label('Content')
                     ->required(),
-                Turnstile::make('cf-captcha')
+                Turnstile::make('cfCaptcha')
                     ->theme('auto'),
             ])
             ->statePath('data')
@@ -44,12 +62,16 @@ class ContactUs extends Component implements HasForms
 
     public function send()
     {
-        Contact::create($this->form->getState());
+        $this->validate();
+
+        $data = $this->form->getState();
+
+        Contact::create($data);
     }
 
     public function render()
     {
-        return 'fixtures.contact-us';
+        return view('fixtures.contact-us');
     }
 
     protected function onValidationError(ValidationException $exception): void

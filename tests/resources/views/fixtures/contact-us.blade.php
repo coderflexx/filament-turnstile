@@ -2,6 +2,6 @@
     <form wire:submit="send">
         {{ $this->form }}
 
-        <button>Send</button>
+        <button type="submit">Send</button>
     </form>
 </div>
