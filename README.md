@@ -1,8 +1,8 @@
 # Filament Turnstile
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/coderflex/filament-turnstile.svg?style=flat-square)](https://packagist.org/packages/coderflex/filament-turnstile)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/coderflexx/filament-turnstile/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/coderflexx/filament-turnstile/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/coderflexx/filament-turnstile/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/coderflexx/filament-turnstile/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/coderflexx/filament-turnstile/run-tests.yml?branch=3.x&label=tests&style=flat-square)](https://github.com/coderflexx/filament-turnstile/actions?query=workflow%3Arun-tests+branch%3A3.x)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/coderflexx/filament-turnstile/fix-php-code-style-issues.yml?branch=3.x&label=code%20style&style=flat-square)](https://github.com/coderflexx/filament-turnstile/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3A3.x)
 [![Total Downloads](https://img.shields.io/packagist/dt/coderflex/filament-turnstile.svg?style=flat-square)](https://packagist.org/packages/coderflex/filament-turnstile)
 
 </br>
@@ -16,16 +16,22 @@
 This plugin uses [Laravel Turnstile](https://github.com/coderflexx/laravel-turnstile) under the hood. For detailed information, explore the [Laravel Turnstile README](https://github.com/coderflexx/laravel-turnstile).
 
 ## Installation
-Install the package via Composer:
+Install the package via Composer (requires **Filament V4**):
 
 ```bash
-composer require coderflex/filament-turnstile
+composer require coderflex/filament-turnstile "^3.0"
+```
+
+For users on **Filament V3**, install the package using:
+
+```bash
+composer require coderflex/filament-turnstile "^2.0"
 ```
 
 For users still on **Filament V2**, install the package using:
 
 ```bash
-composer require coderflex/filament-turnstil "^1.0"
+composer require coderflex/filament-turnstile "^1.0"
 ```
 
 ## Turnstile Keys
